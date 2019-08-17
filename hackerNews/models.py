@@ -8,15 +8,17 @@ class HackerNews(models.Model):
 
     POSITIVE_SENTIMENT = 0
     NEGATIVE_SENTIMENT = 1
+    NEUTRAL_SENTIMENT = 2
 
     sentiment_choices = [
         (POSITIVE_SENTIMENT, "Positive"),
         (NEGATIVE_SENTIMENT, "Negative"),
+        (NEUTRAL_SENTIMENT, "Neutral"),
     ]
 
     hacker_id = models.IntegerField(db_index=True, null=False)
     user_name = models.CharField(max_length=30)
-    article_title = models.CharField(max_length=40)
+    article_title = models.CharField(max_length=40, db_index=True)
     article_url = models.URLField()
     article_score = models.IntegerField()
     article_description = models.TextField()
