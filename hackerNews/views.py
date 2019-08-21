@@ -15,21 +15,27 @@ from rest_framework.response import Response
 @api_view(['GET'])
 def get_news_articles(request):
 
-    ids = get_top_news()
+    ids = get_top_news()[:10]
+    serialized_list = []
     for ID in ids:
         try:
             hacker_news = HackerNews.objects.get(hacker_id=ID)
         except ObjectDoesNotExist:
             hacker_news_response = get_item_details(ID)
-            # hacker_news = HackerNews()
-            # hacker_news.hacker_id = ID
-            # hacker_news.user_name = hacker_news_response.get("by", "Unknown Author")
-            # hacker_news.article_title = hacker_news_response.get("title", "Unknown Title")
-            # hacker_news.article_url = hacker_news_response.get("url", None)
-            # hacker_news.article_score = hacker_news_response.get("score", None)
-            # hacker_news.article_description = hacker_news_response.get("text", "No Text")
-            print get_sentiment(hacker_news_response.get('title'))
+            hacker_news = HackerNews()
+            hacker_news.hacker_id = ID
+            hacker_news.user_name = hacker_news_response.get("by", "Unknown Author")
+            hacker_news.article_title = hacker_news_response.get("title", "Unknown Title")
+            hacker_news.article_url = hacker_news_response.get("url", None)
+            hacker_news.article_score = hacker_news_response.get("score", None)
+            hacker_news.article_description = hacker_news_response.get("text", "No Text")
 
+            sentiment = get_sentiment(hacker_news_response.get('title'))
+            sentiment_value = hacker_news.get_sentiment(sentiment.get('polarity', "Unknown"))
+            hacker_news.sentiment = sentiment_value
+            hacker_news.save()
+            # print()
+        serializer = HackerNewsSerializer(hacker_news)
+        serialized_list.append(serializer.data)
 
-
-    return Response({"message": "Yes!!!", "ids": ids})
+    return Response({"message": "Yes!!!", "ids": serialized_list})

@@ -23,3 +23,14 @@ class HackerNews(models.Model):
     article_score = models.IntegerField()
     article_description = models.TextField()
     sentiment = models.SmallIntegerField(choices=sentiment_choices)
+
+    def get_sentiment(self, sentiment_text):
+        
+        for sentiment in self.sentiment_choices:
+            print sentiment[1].lower(), " and ", sentiment_text.lower(), sentiment[1].lower() == sentiment_text.lower()
+            if sentiment[1].lower() == sentiment_text.lower():
+                return sentiment[0]
+        return self.NEUTRAL_SENTIMENT
+
+    def __str__(self):
+        return self.article_title
